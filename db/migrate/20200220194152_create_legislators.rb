@@ -9,7 +9,9 @@ class CreateLegislators < ActiveRecord::Migration[6.0]
       t.integer :district
       t.string :twitter
       t.string :email
-      t.string :imgage
+      t.string :image
+      t.string :open_states_id
+      t.string :role
 
       t.timestamps
     end

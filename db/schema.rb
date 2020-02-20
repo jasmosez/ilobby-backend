@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_02_20_194324) do
+ActiveRecord::Schema.define(version: 2020_02_20_221850) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -67,6 +67,15 @@ ActiveRecord::Schema.define(version: 2020_02_20_194324) do
   create_table "committees", force: :cascade do |t|
     t.string "name"
     t.string "chamber"
+    t.string "open_states_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "contact_infos", force: :cascade do |t|
+    t.string "type"
+    t.string "value"
+    t.string "note"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
@@ -80,6 +89,15 @@ ActiveRecord::Schema.define(version: 2020_02_20_194324) do
     t.index ["legislator_id"], name: "index_legislator_actions_on_legislator_id"
   end
 
+  create_table "legislator_contact_infos", force: :cascade do |t|
+    t.bigint "legislator_id", null: false
+    t.bigint "contact_info_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["contact_info_id"], name: "index_legislator_contact_infos_on_contact_info_id"
+    t.index ["legislator_id"], name: "index_legislator_contact_infos_on_legislator_id"
+  end
+
   create_table "legislators", force: :cascade do |t|
     t.string "name"
     t.string "family_name"
@@ -89,7 +107,9 @@ ActiveRecord::Schema.define(version: 2020_02_20_194324) do
     t.integer "district"
     t.string "twitter"
     t.string "email"
-    t.string "imgage"
+    t.string "image"
+    t.string "open_states_id"
+    t.string "role"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
@@ -111,4 +131,6 @@ ActiveRecord::Schema.define(version: 2020_02_20_194324) do
   add_foreign_key "committee_legislators", "legislators"
   add_foreign_key "legislator_actions", "actions"
   add_foreign_key "legislator_actions", "legislators"
+  add_foreign_key "legislator_contact_infos", "contact_infos"
+  add_foreign_key "legislator_contact_infos", "legislators"
 end

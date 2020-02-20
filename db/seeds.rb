@@ -4,60 +4,90 @@ require 'json'
 
 url = "https://openstates.org/graphql"
 
-ny_senate = "ocd-organization/8291a233-623d-40e8-882d-21ec2d382c87"
-ny_assembly = "ocd-organization/26bb6306-85f0-4d10-bff7-d1cd5bdc0865"
-tx_senate = ""
-tx_assembly = ""
 
-legislator_query = '{
-  people(first: 100, memberOf: "ocd-organization/8291a233-623d-40e8-882d-21ec2d382c87") {
-    edges {
-      node {
-        name
-        image
-        party: currentMemberships(classification:"party") {
-          organization {
-            name
+gov_bodies = [
+  {slug: "ny_upper", id: "ocd-organization/8291a233-623d-40e8-882d-21ec2d382c87"},
+  {slug: "ny_lower", id: "ocd-organization/26bb6306-85f0-4d10-bff7-d1cd5bdc0865"}
+  # {slug: "tx_upper", id: ""},
+  # {slug: "tx_lower", id: ""}
+]
 
+def legislator_query(gov_body_id, after)
+  return "{
+    people(first: 100, memberOf: \"#{gov_body_id}\", after: \"#{after}\") {
+      edges {
+        node {
+          id
+          name
+          image
+          party: currentMemberships(classification:\"party\") {
+            organization {
+              name
+
+            }
           }
-        }
-        chamber: currentMemberships(classification:["upper", "lower"]) {
-          post {
-            label
-            role
+          chamber: currentMemberships(classification:[\"upper\", \"lower\"]) {
+            post {
+              label
+              role
+            }
+            organization {
+              name
+            }
           }
-          organization {
-            name
+          committees: currentMemberships(classification:\"committee\") {
+            organization {
+              name
+              id
+            }
           }
-        }
-        committees: currentMemberships(classification:"committee") {
-          organization {
-            name
+          contactDetails {
+            type
+            value
+            note
           }
-        }
-        contactDetails {
-        	type
-          value
-          note
         }
       }
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
+      totalCount
     }
-  }
-}'
-
-payload = {
-  query: legislator_query
-}
+  }"
+end
 
 headers = {
   "X-API-KEY": ENV["OS_KEY"]
 }
 
-response = RestClient.post(url, payload, headers )
-json = JSON.parse(response)
-puts json
-byebug
-0
+jsons = []
+
+gov_bodies.each do |gov_body|
+
+  hasNextPage = true
+  after=""
+
+  while hasNextPage
+    payload = {
+      query: legislator_query(gov_body[:id], after)
+    }
+
+    response = RestClient.post(url, payload, headers )
+    json = JSON.parse(response)
+    puts json
+    jsons << json
+    
+    hasNextPage = json["data"]["people"]["pageInfo"]["hasNextPage"]
+    if hasNextPage
+      after = json["data"]["people"]["pageInfo"]["endCursor"]
+    end
+    byebug
+    0
+
+  end
+
+end
 
 
 
