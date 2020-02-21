@@ -2,6 +2,8 @@ require 'byebug'
 require 'rest-client'
 require 'json'
 
+LegislatorContactInfo.all.delete_all
+ContactInfo.all.delete_all
 CommitteeLegislator.all.delete_all
 Legislator.all.delete_all
 Committee.all.delete_all
@@ -99,64 +101,48 @@ gov_bodies.each do |gov_body|
 end
 
 # parse each json response into:
-# legislator object
-# committee objects (if any don't already exist)
-# committee_legislator objects
-# contact_info objects
-# legislator_contact_info objects
 jsons.each do |json|
   json["data"]["people"]["edges"].each do |edge|
     legislator = edge["node"]
-
+    
     id = legislator["id"]
     name = legislator["name"]
     image = legislator["image"]
-    # puts 'legislator["image"] => ' + image
     
+    # legislator object
+    legislator_obj = Legislator.create(open_states_id: id, 
+      name: name, 
+      image: image, 
+      party: legislator["party"].first["organization"]["name"],
+      district: legislator["chamber"].first["post"]["label"],
+      role: legislator["chamber"].first["post"]["role"],
+      chamber: legislator["chamber"].first["organization"]["name"]
+    )
     
-    
-    # puts 'legislator["parties"] => '
-    # legislator["party"].each do |org|
-    #   puts '["organization"]["name"] => ' + org["organization"]["name"]      
-    # end
-    
-    # puts 'legislator["chamber(s)"] => '
-    # legislator["chamber"].each do |chamber|
-    #   puts 'chamber => '
-    #   puts 'chamber["post"]["label"] => ' + chamber["post"]["label"]
-    #   puts 'chamber["post"]["role"] => ' + chamber["post"]["role"]
-    #   puts 'chamber["organization"]["name"] => ' + chamber["organization"]["name"]
-    # end
-    
-    legislatorObj = Legislator.create(open_states_id: id, 
-                      name: name, 
-                      image: image, 
-                      party: legislator["party"].first["organization"]["name"],
-                      district: legislator["chamber"].first["post"]["label"],
-                      role: legislator["chamber"].first["post"]["role"],
-                      chamber: legislator["chamber"].first["organization"]["name"]
-                    )
-
-    # puts 'legislator["committees"] => ' 
     legislator["committees"].each do |committee|
-      # puts 'committee["organization"] => '
-      # puts 'committee["organization"]["id"] => ' + committee["organization"]["id"].to_s
-      # puts 'committee["organization"]["name"] => ' + committee["organization"]["name"].to_s
-      committeeObj = Committee.all.find_by(open_states_id: committee["organization"]["id"])
-      puts committeeObj
-      if !committeeObj
-        committeeObj = Committee.create(open_states_id: committee["organization"]["id"], name: committee["organization"]["name"], chamber: committee["organization"]["parent"]["name"])
-        puts committeeObj
+      
+      # create committee objects (if any don't already exist)
+      committee_obj = Committee.all.find_by(open_states_id: committee["organization"]["id"])
+      puts committee_obj
+      if !committee_obj
+        committee_obj = Committee.create(open_states_id: committee["organization"]["id"], name: committee["organization"]["name"], chamber: committee["organization"]["parent"]["name"])
+        puts committee_obj
       end
-      CommitteeLegislator.create(legislator_id: legislatorObj.id, committee_id: committeeObj.id)
+      
+      # committee_legislator objects
+      CommitteeLegislator.create(legislator_id: legislator_obj.id, committee_id: committee_obj.id)
     end
-
+    
     # puts 'legislator["contactDetails"] => ' 
     legislator["contactDetails"].each do |detail|
-      # puts 'contactDetail => '
+      # contact_info objects
+      contact_info_object = ContactInfo.create(kind: detail["type"], value: detail["value"], note: detail["note"])
       # puts 'contactDetail["type"] => ' + detail["type"]
       # puts 'contactDetail["value"] => ' + detail["value"]
       # puts 'contactDetail["note"] => ' + detail["note"]
+      
+      # legislator_contact_info objects
+      LegislatorContactInfo.create(legislator_id: legislator_obj.id, contact_info_id: contact_info_object.id)
     end
 
     # puts "------------------------"

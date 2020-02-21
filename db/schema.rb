@@ -73,7 +73,7 @@ ActiveRecord::Schema.define(version: 2020_02_20_221850) do
   end
 
   create_table "contact_infos", force: :cascade do |t|
-    t.string "type"
+    t.string "kind"
     t.string "value"
     t.string "note"
     t.datetime "created_at", precision: 6, null: false
