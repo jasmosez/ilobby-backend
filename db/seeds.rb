@@ -75,7 +75,6 @@ gov_bodies.each do |gov_body|
 
     response = RestClient.post(url, payload, headers )
     json = JSON.parse(response)
-    puts json
     jsons << json
     
     hasNextPage = json["data"]["people"]["pageInfo"]["hasNextPage"]
@@ -88,6 +87,10 @@ gov_bodies.each do |gov_body|
   end
 
 end
+
+puts "jsons.length:"
+byebug
+puts jsons.length
 
 
 
