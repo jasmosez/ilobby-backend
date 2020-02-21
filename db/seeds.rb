@@ -38,6 +38,10 @@ def legislator_query(gov_body_id, after)
             post {
               label
               role
+              division {
+                id
+                name
+              }
             }
             organization {
               name
@@ -110,14 +114,18 @@ jsons.each do |json|
     image = legislator["image"]
     
     # legislator object
-    legislator_obj = Legislator.create(open_states_id: id, 
+    legislator_obj = Legislator.create(
+      open_states_id: id, 
       name: name, 
       image: image, 
       party: legislator["party"].first["organization"]["name"],
       district: legislator["chamber"].first["post"]["label"],
       role: legislator["chamber"].first["post"]["role"],
+      open_states_district_id: legislator["chamber"].first["post"]["division"]["id"],
       chamber: legislator["chamber"].first["organization"]["name"]
     )
+
+    puts "open_states_district_id" + legislator["chamber"].first["post"]["division"]["id"],
     
     legislator["committees"].each do |committee|
       
@@ -152,15 +160,6 @@ end
 byebug
 0
 
-# create legislator
-# for each committee
-#   create committee, if committee with that id does not already exist => jsons.last["data"]["people"]["edges"].last["node"]["committees"].first["organization"]["id"]
-#   create committee_legislator
-# end
-# for each contact_info
-#   create contact_info
-#   create legislator_contact_infos
-# end
 
 # jsons.last["data"]["people"]["edges"].last["node"].keys
 # ["id", "name", "image", "party", "chamber", "committees", "contactDetails"]
