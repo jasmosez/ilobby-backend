@@ -125,11 +125,11 @@ def create_legislator(edge)
     party: legislator["party"].first["organization"]["name"],
     district: legislator["chamber"].first["post"]["label"],
     role: legislator["chamber"].first["post"]["role"],
-    open_states_district_id: legislator["chamber"].first["post"]["division"]["id"],
+    geo: fetch_geo_data(legislator["chamber"].first["post"]["division"]["id"]).to_json,
     chamber: legislator["chamber"].first["organization"]["name"]
   )
 
-      # geo: fetch_geo_data(legislator["chamber"].first["post"]["division"]["id"]),
+      
 
   return legislator_obj.id
 end
@@ -163,7 +163,10 @@ def create_contact_information(edge, id)
 end
 
 def fetch_geo_data(district_id)
-  
+  puts district_id
+  url = "https://data.openstates.org/boundaries/2018/#{district_id}.json"
+  response = RestClient.get(url)
+  json = JSON.parse(response)
 end
 
 jsons = fetch_gov_bodies_data

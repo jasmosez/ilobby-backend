@@ -11,7 +11,7 @@ class CreateLegislators < ActiveRecord::Migration[6.0]
       t.string :email
       t.string :image
       t.string :open_states_id
-      t.string :open_states_district_id
+      t.string :geo
       t.string :role
 
       t.timestamps

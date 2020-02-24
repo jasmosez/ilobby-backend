@@ -109,7 +109,7 @@ ActiveRecord::Schema.define(version: 2020_02_20_221850) do
     t.string "email"
     t.string "image"
     t.string "open_states_id"
-    t.string "open_states_district_id"
+    t.string "geo"
     t.string "role"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
