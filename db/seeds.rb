@@ -8,15 +8,7 @@ CommitteeLegislator.all.delete_all
 Legislator.all.delete_all
 Committee.all.delete_all
 
-url = "https://openstates.org/graphql"
 
-# build array of goverment organization ids from Open States
-gov_bodies = [
-  {slug: "ny_upper", id: "ocd-organization/8291a233-623d-40e8-882d-21ec2d382c87"},
-  {slug: "ny_lower", id: "ocd-organization/26bb6306-85f0-4d10-bff7-d1cd5bdc0865"}
-  # {slug: "tx_upper", id: ""},
-  # {slug: "tx_lower", id: ""}
-]
 
 # method to return a string for the body of a POST request to the Open States API
 # takes the open_states_id of a government body and 'after', a string returned by server for pagination
@@ -72,97 +64,122 @@ def legislator_query(gov_body_id, after)
   }"
 end
 
-# header requires the API key
-headers = {
-  "X-API-KEY": ENV["OS_KEY"]
-}
+# iterate through an array of government bodies, make POST requests and handle pagination
+def fetch_gov_bodies_data
+  
+  # array of goverment organization ids from Open States
+  gov_bodies = [
+    {slug: "ny_upper", id: "ocd-organization/8291a233-623d-40e8-882d-21ec2d382c87"},
+    {slug: "ny_lower", id: "ocd-organization/26bb6306-85f0-4d10-bff7-d1cd5bdc0865"}
+    # {slug: "tx_upper", id: ""},
+    # {slug: "tx_lower", id: ""}
+  ]
+  
+  url = "https://openstates.org/graphql"
 
-# array to collect response of each POST request
-jsons = []
+  # header requires the API key
+  headers = {"X-API-KEY": ENV["OS_KEY"]}
 
-# iterate through government bodies, make POST requests and handle pagination
-gov_bodies.each do |gov_body|
+  # array to collect response of each POST request
+  jsons = []
 
-  hasNextPage = true
-  after=""
 
-  while hasNextPage
-    payload = {
-      query: legislator_query(gov_body[:id], after)
-    }
+  gov_bodies.each do |gov_body|
 
-    response = RestClient.post(url, payload, headers )
-    json = JSON.parse(response)
-    jsons << json
-    
-    hasNextPage = json["data"]["people"]["pageInfo"]["hasNextPage"]
-    if hasNextPage
-      after = json["data"]["people"]["pageInfo"]["endCursor"]
+    hasNextPage = true
+    after=""
+
+    while hasNextPage
+      payload = {
+        query: legislator_query(gov_body[:id], after)
+      }
+
+      response = RestClient.post(url, payload, headers )
+      json = JSON.parse(response)
+      jsons << json
+      
+      hasNextPage = json["data"]["people"]["pageInfo"]["hasNextPage"]
+   
+      if hasNextPage
+        after = json["data"]["people"]["pageInfo"]["endCursor"]
+      end
+
     end
 
   end
+  return jsons
+end
+
+def create_legislator(edge)
+  legislator = edge["node"]
+    
+  id = legislator["id"]
+  name = legislator["name"]
+  image = legislator["image"]
+  
+  # create legislator object
+  legislator_obj = Legislator.create(
+    open_states_id: id, 
+    name: name, 
+    image: image, 
+    party: legislator["party"].first["organization"]["name"],
+    district: legislator["chamber"].first["post"]["label"],
+    role: legislator["chamber"].first["post"]["role"],
+    open_states_district_id: legislator["chamber"].first["post"]["division"]["id"],
+    chamber: legislator["chamber"].first["organization"]["name"]
+  )
+
+      # geo: fetch_geo_data(legislator["chamber"].first["post"]["division"]["id"]),
+
+  return legislator_obj.id
+end
+
+def create_committees_and_assignments(edge, id)
+  # iterate through the legislator's committees
+    edge["node"]["committees"].each do |committee|
+      
+      # create committee object (if it doesn't already exist)
+      committee_obj = Committee.all.find_by(open_states_id: committee["organization"]["id"])
+
+      if !committee_obj
+        committee_obj = Committee.create(open_states_id: committee["organization"]["id"], name: committee["organization"]["name"], chamber: committee["organization"]["parent"]["name"])
+      end
+      
+      # create committee_legislator object
+      CommitteeLegislator.create(legislator_id: id, committee_id: committee_obj.id)
+    end
+end
+
+def create_contact_information(edge, id)
+  # iterate through the legislator's contact details
+  edge["node"]["contactDetails"].each do |detail|
+    # create contact_info object
+    contact_info_object = ContactInfo.create(kind: detail["type"], value: detail["value"], note: detail["note"])
+    # create legislator_contact_info object
+    LegislatorContactInfo.create(legislator_id: id, contact_info_id: contact_info_object.id)
+  end
+
 
 end
 
-# parse each json response into:
+def fetch_geo_data(district_id)
+  
+end
+
+jsons = fetch_gov_bodies_data
+
+# iterate through each json response item 
 jsons.each do |json|
+  # iterate through each 'edge (i.e. person) and parse:
   json["data"]["people"]["edges"].each do |edge|
-    legislator = edge["node"]
-    
-    id = legislator["id"]
-    name = legislator["name"]
-    image = legislator["image"]
-    
-    # legislator object
-    legislator_obj = Legislator.create(
-      open_states_id: id, 
-      name: name, 
-      image: image, 
-      party: legislator["party"].first["organization"]["name"],
-      district: legislator["chamber"].first["post"]["label"],
-      role: legislator["chamber"].first["post"]["role"],
-      open_states_district_id: legislator["chamber"].first["post"]["division"]["id"],
-      chamber: legislator["chamber"].first["organization"]["name"]
-    )
-
-    puts "open_states_district_id" + legislator["chamber"].first["post"]["division"]["id"],
-    
-    legislator["committees"].each do |committee|
-      
-      # create committee objects (if any don't already exist)
-      committee_obj = Committee.all.find_by(open_states_id: committee["organization"]["id"])
-      puts committee_obj
-      if !committee_obj
-        committee_obj = Committee.create(open_states_id: committee["organization"]["id"], name: committee["organization"]["name"], chamber: committee["organization"]["parent"]["name"])
-        puts committee_obj
-      end
-      
-      # committee_legislator objects
-      CommitteeLegislator.create(legislator_id: legislator_obj.id, committee_id: committee_obj.id)
-    end
-    
-    # puts 'legislator["contactDetails"] => ' 
-    legislator["contactDetails"].each do |detail|
-      # contact_info objects
-      contact_info_object = ContactInfo.create(kind: detail["type"], value: detail["value"], note: detail["note"])
-      # puts 'contactDetail["type"] => ' + detail["type"]
-      # puts 'contactDetail["value"] => ' + detail["value"]
-      # puts 'contactDetail["note"] => ' + detail["note"]
-      
-      # legislator_contact_info objects
-      LegislatorContactInfo.create(legislator_id: legislator_obj.id, contact_info_id: contact_info_object.id)
-    end
-
-    # puts "------------------------"
+    id = create_legislator(edge)
+    create_committees_and_assignments(edge, id)
+    create_contact_information(edge, id)
   end
 end
 
 byebug
 0
-
-
-# jsons.last["data"]["people"]["edges"].last["node"].keys
-# ["id", "name", "image", "party", "chamber", "committees", "contactDetails"]
 
 
 # GraphiQL query object to get all legislatures and their children
