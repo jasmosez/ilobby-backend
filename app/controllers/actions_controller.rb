@@ -1,6 +1,6 @@
-class CallListsController < ApplicationController
+class ActionsController < ApplicationController
   
-  def show
+  def index
   end
 
   def create

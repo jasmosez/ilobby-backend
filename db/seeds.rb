@@ -164,7 +164,7 @@ def fetch_geo_data(district_id)
   json = JSON.parse(response)
 end
 
-def parse_gov_bodies_data(jsons_array)
+def parse_gov_bodies_data(jsons)
   # iterate through each json response item 
   jsons.each do |json|
     # iterate through each 'edge (i.e. person) and parse:

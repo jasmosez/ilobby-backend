@@ -1,4 +1,4 @@
-class CallListsController < ApplicationController
+class CallsController < ApplicationController
   
   def show
   end
