@@ -4,6 +4,7 @@ class CreateContactInfos < ActiveRecord::Migration[6.0]
       t.string :kind
       t.string :value
       t.string :note
+      t.belongs_to :legislator, null: false, foreign_key: true
 
       t.timestamps
     end

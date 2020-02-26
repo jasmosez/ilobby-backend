@@ -1,5 +1,6 @@
 class LegislatorsController < ApplicationController
   def index
-        render json: Legislator.all 
-    end
+    legislators = Legislator.all
+    render json: legislators, each_serializer: LegislatorSerializer    
+  end
 end

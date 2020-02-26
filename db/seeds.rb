@@ -2,13 +2,12 @@ require 'byebug'
 require 'rest-client'
 require 'json'
 
-LegislatorContactInfo.all.delete_all
-ContactInfo.all.delete_all
-CommitteeLegislator.all.delete_all
-Legislator.all.delete_all
-Committee.all.delete_all
-
-
+def delete_gov_bodies_data
+  ContactInfo.all.delete_all
+  CommitteeLegislator.all.delete_all
+  Legislator.all.delete_all
+  Committee.all.delete_all
+end
 
 # method to return a string for the body of a POST request to the Open States API
 # takes the open_states_id of a government body and 'after', a string returned by server for pagination
@@ -129,8 +128,6 @@ def create_legislator(edge)
     chamber: legislator["chamber"].first["organization"]["name"]
   )
 
-      
-
   return legislator_obj.id
 end
 
@@ -154,9 +151,7 @@ def create_contact_information(edge, id)
   # iterate through the legislator's contact details
   edge["node"]["contactDetails"].each do |detail|
     # create contact_info object
-    contact_info_object = ContactInfo.create(kind: detail["type"], value: detail["value"], note: detail["note"])
-    # create legislator_contact_info object
-    LegislatorContactInfo.create(legislator_id: id, contact_info_id: contact_info_object.id)
+    contact_info_object = ContactInfo.create(kind: detail["type"], value: detail["value"], note: detail["note"], legislator_id: id)
   end
 
 
@@ -169,17 +164,31 @@ def fetch_geo_data(district_id)
   json = JSON.parse(response)
 end
 
-jsons = fetch_gov_bodies_data
-
-# iterate through each json response item 
-jsons.each do |json|
-  # iterate through each 'edge (i.e. person) and parse:
-  json["data"]["people"]["edges"].each do |edge|
-    id = create_legislator(edge)
-    create_committees_and_assignments(edge, id)
-    create_contact_information(edge, id)
+def parse_gov_bodies_data(jsons_array)
+  # iterate through each json response item 
+  jsons.each do |json|
+    # iterate through each 'edge (i.e. person) and parse:
+    json["data"]["people"]["edges"].each do |edge|
+      id = create_legislator(edge)
+      create_committees_and_assignments(edge, id)
+      create_contact_information(edge, id)
+    end
   end
 end
+
+
+
+delete_gov_bodies_data
+parse_gov_bodies_data(fetch_gov_bodies_data)
+
+
+def create_dummy_data
+  user = User.create(email: 'user@ilobby.com')
+  Campaign.create(user_id: user.id, name: "Bail Reform")
+  Campaign.create(user_id: user.id, name: "Greenlight NYC")
+  Campaign.create(user_id: user.id, name: "Single Payer Healthcare")
+end
+
 
 byebug
 0
