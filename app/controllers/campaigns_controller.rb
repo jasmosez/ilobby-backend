@@ -1,6 +1,9 @@
 class CampaignsController < ApplicationController
  
   def index
+    byebug
+    campaigns = session_user.campaigns
+    render json: campaigns
   end
 
   def create

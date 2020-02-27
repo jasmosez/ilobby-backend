@@ -180,13 +180,13 @@ end
 
 delete_gov_bodies_data
 parse_gov_bodies_data(fetch_gov_bodies_data)
-
+create_dummy_data
 
 def create_dummy_data
-  user = User.create(email: 'user@ilobby.com')
-  Campaign.create(user_id: user.id, name: "Bail Reform")
-  Campaign.create(user_id: user.id, name: "Greenlight NYC")
-  Campaign.create(user_id: user.id, name: "Single Payer Healthcare")
+  dummy_user_id = 1
+  Campaign.create(user_id: dummy_user_id, name: "Bail Reform")
+  Campaign.create(user_id: dummy_user_id, name: "Greenlight NYC")
+  Campaign.create(user_id: dummy_user_id, name: "Single Payer Healthcare")
 end
 
 

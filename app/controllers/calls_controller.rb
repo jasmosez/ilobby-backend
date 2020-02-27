@@ -4,6 +4,7 @@ class CallsController < ApplicationController
   end
 
   def create
+    byebug
   end
 
   def update
