@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_02_20_194324) do
+ActiveRecord::Schema.define(version: 2020_02_20_221712) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -19,6 +19,8 @@ ActiveRecord::Schema.define(version: 2020_02_20_194324) do
     t.bigint "user_id", null: false
     t.bigint "campaign_id", null: false
     t.string "type"
+    t.string "status"
+    t.datetime "date"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["campaign_id"], name: "index_actions_on_campaign_id"
@@ -35,9 +37,7 @@ ActiveRecord::Schema.define(version: 2020_02_20_194324) do
 
   create_table "calls", force: :cascade do |t|
     t.bigint "action_id", null: false
-    t.string "status"
     t.string "outcome"
-    t.datetime "date"
     t.integer "duration"
     t.string "notes"
     t.bigint "call_list_id", null: false
@@ -67,8 +67,19 @@ ActiveRecord::Schema.define(version: 2020_02_20_194324) do
   create_table "committees", force: :cascade do |t|
     t.string "name"
     t.string "chamber"
+    t.string "open_states_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "contact_infos", force: :cascade do |t|
+    t.string "kind"
+    t.string "value"
+    t.string "note"
+    t.bigint "legislator_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["legislator_id"], name: "index_contact_infos_on_legislator_id"
   end
 
   create_table "legislator_actions", force: :cascade do |t|
@@ -89,7 +100,10 @@ ActiveRecord::Schema.define(version: 2020_02_20_194324) do
     t.integer "district"
     t.string "twitter"
     t.string "email"
-    t.string "imgage"
+    t.string "image"
+    t.string "open_states_id"
+    t.string "geo"
+    t.string "role"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
@@ -109,6 +123,7 @@ ActiveRecord::Schema.define(version: 2020_02_20_194324) do
   add_foreign_key "campaigns", "users"
   add_foreign_key "committee_legislators", "committees"
   add_foreign_key "committee_legislators", "legislators"
+  add_foreign_key "contact_infos", "legislators"
   add_foreign_key "legislator_actions", "actions"
   add_foreign_key "legislator_actions", "legislators"
 end
