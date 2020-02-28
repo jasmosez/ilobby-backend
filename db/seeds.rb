@@ -177,17 +177,17 @@ def parse_gov_bodies_data(jsons)
 end
 
 
-
-delete_gov_bodies_data
-parse_gov_bodies_data(fetch_gov_bodies_data)
-create_dummy_data
-
 def create_dummy_data
   dummy_user_id = 1
   Campaign.create(user_id: dummy_user_id, name: "Bail Reform")
   Campaign.create(user_id: dummy_user_id, name: "Greenlight NYC")
   Campaign.create(user_id: dummy_user_id, name: "Single Payer Healthcare")
 end
+
+delete_gov_bodies_data
+parse_gov_bodies_data(fetch_gov_bodies_data)
+create_dummy_data
+
 
 
 byebug

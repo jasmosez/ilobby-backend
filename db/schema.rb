@@ -18,12 +18,14 @@ ActiveRecord::Schema.define(version: 2020_02_20_221712) do
   create_table "actions", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "campaign_id", null: false
+    t.bigint "legislator_id", null: false
     t.string "type"
     t.string "status"
     t.datetime "date"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["campaign_id"], name: "index_actions_on_campaign_id"
+    t.index ["legislator_id"], name: "index_actions_on_legislator_id"
     t.index ["user_id"], name: "index_actions_on_user_id"
   end
 
@@ -82,15 +84,6 @@ ActiveRecord::Schema.define(version: 2020_02_20_221712) do
     t.index ["legislator_id"], name: "index_contact_infos_on_legislator_id"
   end
 
-  create_table "legislator_actions", force: :cascade do |t|
-    t.bigint "action_id", null: false
-    t.bigint "legislator_id", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["action_id"], name: "index_legislator_actions_on_action_id"
-    t.index ["legislator_id"], name: "index_legislator_actions_on_legislator_id"
-  end
-
   create_table "legislators", force: :cascade do |t|
     t.string "name"
     t.string "family_name"
@@ -116,6 +109,7 @@ ActiveRecord::Schema.define(version: 2020_02_20_221712) do
   end
 
   add_foreign_key "actions", "campaigns"
+  add_foreign_key "actions", "legislators"
   add_foreign_key "actions", "users"
   add_foreign_key "call_lists", "campaigns"
   add_foreign_key "calls", "actions"
@@ -124,6 +118,4 @@ ActiveRecord::Schema.define(version: 2020_02_20_221712) do
   add_foreign_key "committee_legislators", "committees"
   add_foreign_key "committee_legislators", "legislators"
   add_foreign_key "contact_infos", "legislators"
-  add_foreign_key "legislator_actions", "actions"
-  add_foreign_key "legislator_actions", "legislators"
 end

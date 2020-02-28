@@ -17,10 +17,10 @@ class CallListsController < ApplicationController
     legislator_ids.each do |legislator_id|
       # create action with user_id and campaign_id. 
       # hardcoding type as call list. 
-      new_action = Action.create(user_id: current_user_id, campaign_id: campaign_id )
+      new_action = Action.create(user_id: current_user_id, campaign_id: campaign_id, legislator_id: legislator_id )
       
-      # create legislator action. one for each action id and one for each legislator id
-      LegislatorAction.create(legislator_id: legislator_id, action_id: new_action.id)
+      # # create legislator action. one for each action id and one for each legislator id
+      # LegislatorAction.create(legislator_id: legislator_id, action_id: new_action.id)
 
       # create call. one for each action id. Eachwith call_list_id
       Call.create(action_id: new_action.id, call_list_id: new_call_list.id)
