@@ -3,15 +3,15 @@ class CallListsController < ApplicationController
   def show
   end
 
-  def create
+  def create 
     # What's wrong with call_list_params?
     campaign_id = call_list_params[:campaign_id]
-    action_name = call_list_params[:action_name]
+    call_list_name = call_list_params[:call_list_name]
     current_user_id = call_list_params[:current_user_id]
     legislator_ids = call_list_params[:legislator_ids]
 
     # create 1 Call list
-    new_call_list = CallList.create(campaign_id: campaign_id)
+    new_call_list = CallList.create(campaign_id: campaign_id, name: call_list_name)
 
     # for each legislator selected (7)...
     legislator_ids.each do |legislator_id|
@@ -39,7 +39,7 @@ class CallListsController < ApplicationController
   private
 
   def call_list_params
-    params.require(:call_list).permit(:campaign_id, :action_name, :current_user_id, legislator_ids: [])
+    params.require(:call_list).permit(:campaign_id, :call_list_name, :current_user_id, legislator_ids: [])
   end
 end
 
