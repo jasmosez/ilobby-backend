@@ -8,6 +8,8 @@ Rails.application.routes.draw do
   resources :legislators, only: :index
 
   post '/signup', to: 'users#create'
+  get '/users/:id', to: 'users#show'
+
   post '/login', to: 'auth#login'
   get '/auto_login', to: 'auth#auto_login'
 

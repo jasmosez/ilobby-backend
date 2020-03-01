@@ -12,12 +12,12 @@ class CallListsController < ApplicationController
 
     # create 1 Call list
     new_call_list = CallList.create(campaign_id: campaign_id, name: call_list_name)
-
+    
     # for each legislator selected (7)...
     legislator_ids.each do |legislator_id|
       # create action with user_id and campaign_id. 
-      # hardcoding type as call list. 
-      new_action = Action.create(user_id: current_user_id, campaign_id: campaign_id, legislator_id: legislator_id )
+      # hardcoding kind as call list. 
+      new_action = Action.create(user_id: current_user_id, campaign_id: campaign_id, legislator_id: legislator_id, kind: "Call" )
       
       # # create legislator action. one for each action id and one for each legislator id
       # LegislatorAction.create(legislator_id: legislator_id, action_id: new_action.id)

@@ -16,4 +16,8 @@ class UsersController < ApplicationController
     end
   end
 
+  def show
+    render json: session_user, serializer: UserSerializer
+  end
+
 end

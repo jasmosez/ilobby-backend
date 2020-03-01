@@ -186,7 +186,7 @@ end
 
 delete_gov_bodies_data
 parse_gov_bodies_data(fetch_gov_bodies_data)
-create_dummy_data
+# create_dummy_data
 
 
 
