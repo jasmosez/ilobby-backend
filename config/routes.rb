@@ -6,6 +6,7 @@ Rails.application.routes.draw do
   resources :call_lists, only: [:show, :create, :update, :destroy]
   resources :campaigns, only: [:index, :create, :update, :destroy]
   resources :legislators, only: :index
+  resources :committees, only: :index
 
   post '/signup', to: 'users#create'
   get '/users/:id', to: 'users#show'
