@@ -10,11 +10,17 @@ class CampaignsController < ApplicationController
     campaign = Campaign.create(campaign_params)
     render json: campaign
   end
-
+  
   def update
+    campaign = Campaign.find(params[:id])
+    campaign.update(campaign_params)
+    render json: campaign
   end
-
+  
   def destroy
+    campaign = Campaign.find(params[:id])
+    campaign.destroy
+    render json: campaign
   end
 
   private
