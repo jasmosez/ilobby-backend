@@ -31,6 +31,9 @@ class CallListsController < ApplicationController
   end
 
   def update
+    call_list = CallList.find(params[:id])
+    call_list.update(call_list_params)
+    render json: call_list
   end
 
   def destroy
@@ -39,7 +42,7 @@ class CallListsController < ApplicationController
   private
 
   def call_list_params
-    params.require(:call_list).permit(:campaign_id, :call_list_name, :current_user_id, legislator_ids: [])
+    params.require(:call_list).permit(:campaign_id, :name, :call_list_name, :current_user_id, legislator_ids: [])
   end
 end
 
