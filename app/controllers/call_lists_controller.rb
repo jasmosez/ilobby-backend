@@ -23,7 +23,8 @@ class CallListsController < ApplicationController
       # LegislatorAction.create(legislator_id: legislator_id, action_id: new_action.id)
 
       # create call. one for each action id. Eachwith call_list_id
-      Call.create(action_id: new_action.id, call_list_id: new_call_list.id)
+      # set the 4 other fields to empty strings instead of nil to support save button functionality on call_list page (except duration which is an integer, so nil is fine)
+      Call.create(action_id: new_action.id, call_list_id: new_call_list.id, outcome: "", commitment: "", notes: "")
     end
   
     render json: new_call_list, serializer: CallListSerializer

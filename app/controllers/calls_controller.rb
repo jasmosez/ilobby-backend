@@ -9,8 +9,11 @@ class CallsController < ApplicationController
   def update
     call = Call.all.find(params[:id])
     call.update(call_params)
-    if (!!call.outcome && !!call.duration && !!call.notes && call.commitment)
-      action = Action.all.find(call.action_id)
+    action = Action.all.find(call.action_id)
+    
+    if (!call.outcome || call.outcome == "" || !call.duration || !call.notes || call.notes == "" || !call.commitment || call.commitment == "")
+      action.update(complete: false, date: nil)
+    else
       action.update(complete: true, date: Time.now)
     end
     render json: call
