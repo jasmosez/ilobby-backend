@@ -17,11 +17,12 @@ class CampaignsController < ApplicationController
     render json: campaign
   end
   
-  def destroy
-    campaign = Campaign.find(params[:id])
-    campaign.destroy
-    render json: campaign
-  end
+  # def destroy
+  #   byebug
+  #   campaign = Campaign.find(params[:id])
+  #   campaign.destroy
+  #   render json: campaign
+  # end
 
   private
 

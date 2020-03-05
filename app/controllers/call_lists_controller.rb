@@ -37,8 +37,8 @@ class CallListsController < ApplicationController
     render json: call_list
   end
 
-  def destroy
-  end
+  # def destroy
+  # end
 
   private
 

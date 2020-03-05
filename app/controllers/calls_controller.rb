@@ -19,8 +19,8 @@ class CallsController < ApplicationController
     render json: call
   end
 
-  def destroy
-  end
+  # def destroy
+  # end
 
   private
 
