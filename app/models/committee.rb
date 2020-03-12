@@ -5,6 +5,10 @@ class Committee < ApplicationRecord
   def filter_name
     if self.chamber == "Assembly"
       return "(A) " + self.name
+    
+    elsif self.chamber == "House"
+      return "(H) " + self.name
+    
     else
       return "(S) " + self.name
     end
