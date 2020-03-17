@@ -192,8 +192,8 @@ parse_gov_bodies_data(fetch_gov_bodies_data)
 
 
 
-byebug
-0
+# byebug
+# 0
 
 
 # GraphiQL query object to get all legislatures and their children
