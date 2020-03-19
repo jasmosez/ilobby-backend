@@ -16,9 +16,13 @@ Uses Ruby 2.6.1 and Rails 6.0.2.2
 create an .env file in the root directory defining `OS_KEY` as your open states API key
 
 ## Database creation
-Migrate and seed the database
+### Migrate the database
+rails db:migrate
 
-Note that /db/seeds.rb contains, but does not use some methods for parsing collections of legislator twitter handles. To date those are being collected and processed in an ad hoc fashion.
+### Seed the database
+rails db:seed
+
+Note that /db/seeds.rb contains, but does not use some methods for parsing collections of legislator twitter handles and exporting user data as csv files. To date this is all being done in an ad hoc fashion.
 
 ## How to run the test suite
 There is not test coverage at this time
