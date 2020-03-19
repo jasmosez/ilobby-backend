@@ -25,6 +25,6 @@ Note that /db/seeds.rb contains, but does not use some methods for parsing colle
 There is not test coverage at this time
 
 ## Current Deployment(s)
-It is currently deployed at ilobby.thisjames.com
+It is currently deployed at https://ilobby.thisjames.com
 
 # Let me know what you think!
