@@ -3,12 +3,11 @@
 ## OVERVIEW
 iLobby is a tool to explore, select and take action towards state-level legislators in the United States.
 
-This backend is an API that pulls data from the openstates.org api
-The frontend can be found here: https://github.com/jasmosez/ilobby-frontend
-It visualizes legislative districts using the google maps javascript api
+This backend is an API that pulls data from the openstates.org API.
+
+The frontend can be found here: https://github.com/jasmosez/ilobby-frontend. It visualizes legislative districts using the Google Maps Javascript API.
 
 You will need your own API keys for both.
-
 
 ## Ruby/Rails versions
 Uses Ruby 2.6.1 and Rails 6.0.2.2
