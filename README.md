@@ -1,24 +1,30 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+## OVERVIEW
+iLobby is a tool to explore, select and take action towards state-level legislators in the United States.
 
-Things you may want to cover:
+This backend is an API that pulls data from the openstates.org api
+The frontend can be found here: https://github.com/jasmosez/ilobby-frontend
+It visualizes legislative districts using the google maps javascript api
 
-* Ruby version
+You will need your own API keys for both.
 
-* System dependencies
 
-* Configuration
+## Ruby/Rails versions
+Uses Ruby 2.6.1 and Rails 6.0.2.2
 
-* Database creation
+## Configuration
+create an .env file in the root directory defining `OS_KEY` as your open states API key
 
-* Database initialization
+## Database creation
+Migrate and seed the database
 
-* How to run the test suite
+Note that /db/seeds.rb contains, but does not use some methods for parsing collections of legislator twitter handles. To date those are being collected and processed in an ad hoc fashion.
 
-* Services (job queues, cache servers, search engines, etc.)
+## How to run the test suite
+There is not test coverage at this time
 
-* Deployment instructions
+## Current Deployment(s)
+It is currently deployed at ilobby.thisjames.com
 
-* ...
+# Let me know what you think!
