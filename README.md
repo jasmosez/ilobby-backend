@@ -32,3 +32,5 @@ The backend is currently deployed at https://ilobby-backend.herokuapp.com
 The frontend is currently deployed at https://ilobby.thisjames.com
 
 # Let me know what you think!
+Feel free to browse the [iLobby project Trello board](https://trello.com/b/9C6jGF7k/ilobby) as well
+
