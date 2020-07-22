@@ -17,7 +17,11 @@ class UsersController < ApplicationController
   end
 
   def show
-    render json: session_user, serializer: UserSerializer
+    if session_user
+      render json: session_user, serializer: UserSerializer
+    else 
+      render json: {errors: "No Authorization" }, status: 403
+    end
   end
 
 end

@@ -6,15 +6,16 @@ class AuthController < ApplicationController
       token = encode_token(user.id)
       render json: {user: user, token: token}
     else
-      render json: {errors: "You dun goofed!"}
+      render json: {errors: "Invalid email and password"}
     end
   end
 
   def auto_login
-    if session_user
-      render json: session_user
+    if logged_in?      
+      token = encode_token(session_user.id)
+      render json: {user: session_user, token: token}
     else 
-      render json: {errors: "That ain't no user I ever heard of!"}
+      render json: {errors: "Invalid token"}
     end
   end
 
