@@ -17,6 +17,12 @@ class UsersController < ApplicationController
   end
 
   def show
+    byebug
+    token = request.headers['Authorization']
+    puts 'FirebaseIdToken::Signature.verify(token)'
+    puts FirebaseIdToken::Signature.verify(token)
+    byebug
+
     if session_user
       render json: session_user, serializer: UserSerializer
     else 

@@ -1,3 +1,5 @@
+require 'byebug'
+
 class ApplicationController < ActionController::API
       # skip_before_action :verify_authenticity_token
 
@@ -18,7 +20,10 @@ class ApplicationController < ActionController::API
       end
   
       def session_user
-            User.find_by(id: decoded_token)
+            #  HOW ARE USERS GOING TO BE STORED RE: THEIR GOOGLE UID?
+            # byebug
+            # User.find_by(id: decoded_token)
+            User.find(1)
       end
   
       def logged_in?
