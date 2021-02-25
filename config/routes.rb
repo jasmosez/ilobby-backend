@@ -9,7 +9,7 @@ Rails.application.routes.draw do
   resources :committees, only: :index
 
   post '/signup', to: 'users#create'
-  get '/users/:id', to: 'users#show'
+  get '/users', to: 'users#index'
 
   post '/login', to: 'auth#login'
   get '/auto_login', to: 'auth#auto_login'

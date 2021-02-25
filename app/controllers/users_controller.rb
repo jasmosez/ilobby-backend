@@ -16,16 +16,24 @@ class UsersController < ApplicationController
     end
   end
 
-  def show
-    byebug
+  def index
     token = request.headers['Authorization']
-    puts 'FirebaseIdToken::Signature.verify(token)'
-    puts FirebaseIdToken::Signature.verify(token)
-    byebug
+    verified = FirebaseIdToken::Signature.verify(token)
 
-    if session_user
-      render json: session_user, serializer: UserSerializer
+    if verified
+      # look up verified['user_id'] in db
+      existing_user = User.find_by(user_id: verified['user_id'])
+      if existing_user
+        # if it exists, return the data using UserSerializer
+        render json: existing_user, serializer: UserSerializer
+      else
+        # if it does not exist, create a user, then return data using UserSerializer
+        new_user = User.create(user_id: verified['user_id'], email: verified['email'])
+        render json: new_user, serializer: UserSerializer
+
+      end
     else 
+      #  if user is not verified return error, 403 status
       render json: {errors: "No Authorization" }, status: 403
     end
   end
