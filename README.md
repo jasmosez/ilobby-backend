@@ -40,12 +40,13 @@ There is not test coverage at this time
 The backend is currently deployed at https://ilobby-backend.herokuapp.com
 The frontend is currently deployed at https://ilobby.thisjames.com
 
-## Firebase & Firebase Id Token
-The app uses Firebase to manage and validate users. The frontend login and signup components, run a complete auth flow with Firebase and then store a token in localStorage until the user logs out. This token is included in all fetches for user data (in an Authorization header) and validated by Firebase each time.
+## Firebase & Authorization flow
+The app uses Firebase to manage and validate users. The frontend login and signup components, run a complete auth flow with Firebase and then store a token in localStorage until the user logs out. This token is included in all fetches for user data (in an Authorization header) and validated by Firebase each time. 
 
+The main `GET` request for user data is routed through `users#index`. If, at this time, the valid token indicates a firebase `user-id` that is not currently in the backend's database, a new user is created.
+
+## Firebase Id Token & Redis
 Token validation makes use of [Firebase Id Token](https://github.com/fschuindt/firebase_id_token). As per their documentation, this app requires a small Redis instance to store Google's x509 certificates. 
-
-## Redis
 
 To start a Redis server locally:
 ```
