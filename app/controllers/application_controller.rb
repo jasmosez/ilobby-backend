@@ -1,34 +1,29 @@
 require 'byebug'
 
 class ApplicationController < ActionController::API
-      # skip_before_action :verify_authenticity_token
 
-      def encode_token(id)
-          JWT.encode({user_id: id}, ENV["JWT_SALT"])
-      end
-  
-      def get_auth_header
-        request.headers["Authorization"]
-      end
-  
-      def decoded_token
-            begin
-                  JWT.decode(get_auth_header, ENV["JWT_SALT"])[0]["user_id"]
-            rescue
-                  nil
+      def current_user
+            token = request.headers['Authorization']
+            verified = FirebaseIdToken::Signature.verify(token)
+
+            if verified
+            # look up verified['user_id'] in db
+                  existing_user = User.find_by(user_id: verified['user_id'])
+                  if existing_user
+                        return existing_user 
+                  else
+                        return User.create(user_id: verified['user_id'], email: verified['email'])
+                  end
+            else 
+                  #  if user is not verified return error, 403 status
+                  return nil
             end
       end
-  
-      def session_user
-            #  HOW ARE USERS GOING TO BE STORED RE: THEIR GOOGLE UID?
-            # byebug
-            # User.find_by(id: decoded_token)
-            User.find(1)
-      end
-  
-      def logged_in?
-            !!session_user
-      end
 
+      def check_current_user
+            unless current_user
+                  render json: {errors: "No Authorization" }, status: 403
+            end
+      end
 
 end

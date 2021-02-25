@@ -1,5 +1,5 @@
 class CampaignsController < ApplicationController
- 
+  before_action :check_current_user
   # def index
   #   byebug
   #   campaigns = session_user.campaigns
