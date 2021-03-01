@@ -3,9 +3,8 @@ class User < ApplicationRecord
   has_many :campaigns
   has_many :calls, through: :actions
   has_many :call_lists, through: :campaigns
+  has_many :notes
 
-  validates :email, uniqueness: true
-
-  has_secure_password
+  validates :user_id, uniqueness: true
 
 end

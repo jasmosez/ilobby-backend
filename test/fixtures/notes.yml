@@ -1,0 +1,11 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  contents: MyString
+  user: one
+  legislator: one
+
+two:
+  contents: MyString
+  user: two
+  legislator: two
