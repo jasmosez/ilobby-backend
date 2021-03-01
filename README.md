@@ -53,5 +53,10 @@ To start a Redis server locally:
 redis-server --port 6380
 ```
 
+To locally run the rake task to update the google certificates:
+```
+rails firebase:certificates:force_request
+```
+
 # Let me know what you think!
 Feel free to browse the [iLobby project Trello board](https://trello.com/b/9C6jGF7k/ilobby) as well
