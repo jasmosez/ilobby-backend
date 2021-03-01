@@ -46,3 +46,4 @@ gem 'jwt'
 gem 'active_model_serializers'
 gem 'firebase_id_token'
 gem 'redis'
+gem 'whenever', require: false
